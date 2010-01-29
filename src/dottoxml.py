@@ -31,7 +31,7 @@ import dot
 usgmsg = "Usage: dottoxml.py [options] infile.dot outfile.graphml"
 
 def usage():
-    print "dottoxml 1.0, 2009-08-15, Dirk Baechle\n"
+    print "dottoxml 1.1, 2010-01-29, Dirk Baechle\n"
     print usgmsg
     print "Hint: Try '-h' or '--help' for further infos!"
 

@@ -115,6 +115,7 @@ class Node:
         self.id = 0
         self.attribs = {}
         self.referenced = False
+        self.sections = []
 
     def initFromString(self, line):
         """ extract node info from the given text line """
@@ -132,7 +133,6 @@ class Node:
                 atts = atts[:spos]
                 self.attribs = parseAttributes(atts)
         # Process sections
-        self.sections = []
         if self.attribs.has_key("label"):
             tlabel = self.attribs["label"]
             if (tlabel != "" and     
