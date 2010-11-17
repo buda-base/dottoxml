@@ -1,5 +1,5 @@
 # coding: latin-1
-# Copyright (c) 2009 Dirk Baechle.
+# Copyright (c) 2009,2010 Dirk Baechle.
 # www: http://www.mydarc.de/dl9obn/programming/python/dottoxml
 # mail: dl9obn AT darc.de
 #

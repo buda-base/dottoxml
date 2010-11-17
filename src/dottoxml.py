@@ -1,5 +1,5 @@
 # coding: latin-1
-# Copyright (c) 2009 Dirk Baechle.
+# Copyright (c) 2009,2010 Dirk Baechle.
 # www: http://www.mydarc.de/dl9obn/programming/python/dottoxml
 # mail: dl9obn AT darc.de
 #
@@ -31,7 +31,7 @@ import dot
 usgmsg = "Usage: dottoxml.py [options] infile.dot outfile.graphml"
 
 def usage():
-    print "dottoxml 1.1, 2010-01-29, Dirk Baechle\n"
+    print "dottoxml 1.2, 2010-11-17, Dirk Baechle\n"
     print usgmsg
     print "Hint: Try '-h' or '--help' for further infos!"
 
@@ -286,7 +286,7 @@ def main():
     if options.sweep:
         rnodes = {}
         for key, n in nodes.iteritems():
-            if n.referenced == True:
+            if n.referenced:
                 rnodes[key] = n
         nodes = rnodes
         if options.verbose:

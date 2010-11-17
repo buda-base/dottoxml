@@ -1,5 +1,5 @@
 # coding: latin-1
-# Copyright (c) 2009 Dirk Baechle.
+# Copyright (c) 2009,2010 Dirk Baechle.
 # www: http://www.mydarc.de/dl9obn/programming/python/dottoxml
 # mail: dl9obn AT darc.de
 #
@@ -188,9 +188,9 @@ class Node:
         """ from node copy all new attributes, that do not exist in self """
         for a in node.attribs:
             if not self.attribs.has_key(a):
-                self.attribs[k] = node.attribs[k]
+                self.attribs[a] = node.attribs[a]
                 
-    def exportDot(self, o, nodes, conf):
+    def exportDot(self, o, conf):
         """ write the node in DOT format to the given file """
         if len(self.attribs) > 0:
             o.write("\"%s\" %s;\n" % (self.label, compileAttributes(self.attribs)))
@@ -221,7 +221,7 @@ class Node:
         data0.setAttribute(u'key', u'd0')
 
         exportUml = False
-        if len(self.sections) > 0 and conf.NodeUml == True and not conf.LumpAttributes:
+        if len(self.sections) > 0 and conf.NodeUml and not conf.LumpAttributes:
             exportUml = True
             snode = doc.createElement(u'y:UMLClassNode')
         else:
@@ -344,9 +344,9 @@ class Edge:
 
     def complementAttributes(self, edge):
         """ from edge copy all new attributes, that do not exist in self """
-        for a in node.attribs:
+        for a in edge.attribs:
             if not self.attribs.has_key(a):
-                self.attribs[k] = node.attribs[k]
+                self.attribs[a] = edge.attribs[a]
                 
     def exportDot(self, o, nodes, conf):
         """ write the edge in DOT format to the given file """

@@ -26,6 +26,11 @@ Now looking at complicated DOT graphs is a snap...have a try!
 
 ~[[dottoxml.zip dottoxml.zip]]||Archived folder with the Python scripts for $$dottoxml$$.
 
+== Contributions == contrib
+
+~2010-11-13||Daniel Reynaud: error report and patch (copying of attributes for default nodes and edges did not work, due to a copy-paste error).
+~2010-01-27||Martin Bijl-Schwab: error report and patch ($$self.sections$$ did not get initialized in all cases).
+
 == Basic usage == basic
 
 Note:
