@@ -312,10 +312,10 @@ class Edge:
             line = line[:spos].strip()
 
         # Process labels
-        ll = line.split()
-        if len(ll) == 3:
+        ll = line.replace('->',' ').split()
+        if len(ll) > 1:
             self.src = ll[0].strip('"')
-            self.dest = ll[2].rstrip(';').strip('"')
+            self.dest = ll[1].rstrip(';').strip('"')
         # Process attributes
         if len(atts):
             spos = atts.rfind(']')
