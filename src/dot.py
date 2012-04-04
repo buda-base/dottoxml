@@ -392,8 +392,8 @@ class Edge:
         line.setAttribute(u'width', u'1.0')
         pedge.appendChild(line)
         arrow = doc.createElement(u'y:Arrows')
-        arrow_tail = "none"
-        arrow_head = "none"
+        arrow_tail = conf.DefaultArrowTail
+        arrow_head = conf.DefaultArrowHead
         if conf.Arrows:
             if self.attribs.has_key('arrowtail'):
                 arrow_head = self.attribs['arrowtail']

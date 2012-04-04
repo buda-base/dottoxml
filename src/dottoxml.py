@@ -1,5 +1,5 @@
 # coding: latin-1
-# Copyright (c) 2009,2010 Dirk Baechle.
+# Copyright (c) 2009,2010,2011,2012 Dirk Baechle.
 # www: http://www.mydarc.de/dl9obn/programming/python/dottoxml
 # mail: dl9obn AT darc.de
 #
@@ -31,7 +31,7 @@ import dot
 usgmsg = "Usage: dottoxml.py [options] infile.dot outfile.graphml"
 
 def usage():
-    print "dottoxml 1.2, 2010-11-17, Dirk Baechle\n"
+    print "dottoxml 1.3, 2012-04-04, Dirk Baechle\n"
     print usgmsg
     print "Hint: Try '-h' or '--help' for further infos!"
 
@@ -162,6 +162,12 @@ def main():
     parser.add_option('--ae', '--auto-edges',
                       action='store_true', dest='EdgeLabelsAutoComplete', default=False,
                       help='auto-complete edge labels')
+    parser.add_option('--ah', '--arrowhead',
+                      action='store', dest='DefaultArrowHead', default='none', metavar='TYPE',
+                      help='sets the default appearance of arrow heads for edges (normal|diamond|dot|...) [default : %default]')
+    parser.add_option('--at', '--arrowtail',
+                      action='store', dest='DefaultArrowTail', default='none', metavar='TYPE',
+                      help='sets the default appearance of arrow tails for edges (normal|diamond|dot|...) [default : %default]')
     parser.add_option('--cn', '--color-nodes',
                       action='store', dest='DefaultNodeColor', default='#CCCCFF', metavar='COLOR',
                       help='default node color [default : "#CCCCFF"]')
