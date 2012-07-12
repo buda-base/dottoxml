@@ -1,6 +1,6 @@
 # coding: latin-1
 # Copyright (c) 2009,2010,2011,2012 Dirk Baechle.
-# www: http://www.mydarc.de/dl9obn/programming/python/dottoxml
+# www: https://bitbucket.org/dirkbaechle/dottoxml
 # mail: dl9obn AT darc.de
 #
 # This program is free software; you can redistribute it and/or modify it under
@@ -31,7 +31,7 @@ import dot
 usgmsg = "Usage: dottoxml.py [options] infile.dot outfile.graphml"
 
 def usage():
-    print "dottoxml 1.3, 2012-04-04, Dirk Baechle\n"
+    print "dottoxml 1.4, 2012-07-12, Dirk Baechle\n"
     print usgmsg
     print "Hint: Try '-h' or '--help' for further infos!"
 
@@ -225,9 +225,20 @@ def main():
     nid = 1
     eid = 1
     f = open(infile, 'r')
-    for l in f.readlines():
-        l = unicode(l, options.InputEncoding)
-        if l.find('->') >= 0:
+    content = f.read().splitlines()
+    f.close()
+
+    idx = 0
+    while idx < len(content):
+        l = unicode(content[idx], options.InputEncoding)
+        if '->' in l:
+            # Check for multiline edge
+            if '[' in l and ']' not in l:
+                ml = ""
+                while ']' not in ml:
+                    idx += 1
+                    ml = unicode(content[idx], options.InputEncoding)
+                    l = ' '.join([l.rstrip(), ml.lstrip()])
             # Process edge
             e = dot.Edge()
             e.initFromString(l)
@@ -236,9 +247,14 @@ def main():
             if default_edge:
                 e.complementAttributes(default_edge)
             edges.append(e)
-        elif (l.find('[') > 0 and
-              l.find(']') > 0 and
-              l.find(';') > 0):
+        elif '[' in l:
+            # Check for multiline node
+            if ']' not in l:
+                ml = ""
+                while ']' not in ml:
+                    idx += 1
+                    ml = unicode(content[idx], options.InputEncoding)
+                    l = ' '.join([l.rstrip(), ml.lstrip()])
             # Process node
             n = dot.Node()
             n.initFromString(l)
@@ -256,7 +272,7 @@ def main():
                     default_edge = n
                 elif lowlabel == 'node':
                     default_node = n   
-        elif l.find('charset=') >=0:
+        elif 'charset=' in l:
             # Pick up input encoding from DOT file
             li = l.strip().split('=')
             if len(li) == 2:
@@ -265,9 +281,8 @@ def main():
                     options.InputEncoding = ienc
                     if options.verbose:
                         print "Info: Picked up input encoding '%s' from the DOT file." % ienc
-            
-    f.close()
-    
+        idx += 1
+
     # Add single nodes, if required
     for e in edges:
         if not nodes.has_key(e.src):

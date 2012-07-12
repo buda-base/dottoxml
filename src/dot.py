@@ -1,6 +1,6 @@
 # coding: latin-1
 # Copyright (c) 2009,2010 Dirk Baechle.
-# www: http://www.mydarc.de/dl9obn/programming/python/dottoxml
+# www: https://bitbucket.org/dirkbaechle/dottoxml
 # mail: dl9obn AT darc.de
 #
 # This program is free software; you can redistribute it and/or modify it under
@@ -25,6 +25,9 @@ import X11Colors
 r_label = re.compile(r'label\s*=\s*"\s*\{[^\}]*\}\s*"\s*')
 r_labelstart = re.compile(r'label\s*=\s*"\s*\{')
 r_labelclose = re.compile(r'\}\s*"')
+
+# Default output encoding for the ASCII output formats GML and GDF
+latinenc = "latin-1"
 
 def compileAttributes(attribs):
     """ return the list of attributes as a DOT text string """
@@ -199,7 +202,7 @@ class Node:
 
     def exportGDF(self, o, conf):
         """ write the node in GDF format to the given file """
-        tlabel = self.getLabel(conf)
+        tlabel = self.getLabel(conf).encode(latinenc, errors="ignore")
         if tlabel == "":
             tlabel = "n%d" % self.id
         o.write("%s\n" % tlabel)
@@ -209,7 +212,7 @@ class Node:
         o.write("  node [\n")
         o.write("    id %d\n" % self.id)
         o.write("    label\n")
-        o.write("    \"%s\"\n" % self.getLabel(conf))
+        o.write("    \"%s\"\n" % self.getLabel(conf).encode(latinenc, errors="ignore"))
         o.write("  ]\n")
 
     def exportGraphml(self, doc, parent, conf):        
@@ -357,13 +360,13 @@ class Edge:
 
     def exportGDF(self, o, nodes, conf):
         """ write the edge in GDF format to the given file """
-        slabel = self.src.getLabel(conf)
+        slabel = nodes[self.src].getLabel(conf)
         if slabel == "":
-            slabel = "n%d" % self.src.id
-        dlabel = self.dest.getLabel(conf)
+            slabel = "n%d" % nodes[self.src].id
+        dlabel = nodes[self.dest].getLabel(conf)
         if dlabel == "":
-            dlabel = "n%d" % self.dest.id
-        o.write("%s,%s\n" % (slabel, dlabel))
+            dlabel = "n%d" % nodes[self.dest].id
+        o.write("%s,%s\n" % (slabel.encode(latinenc, errors="ignore"), dlabel.encode(latinenc, errors="ignore")))
 
     def exportGML(self, o, nodes, conf):
         """ write the edge in GML format to the given file """
@@ -371,7 +374,7 @@ class Edge:
         o.write("    source %d\n" % nodes[self.src].id)
         o.write("    target %d\n" % nodes[self.dest].id)
         o.write("    label\n")
-        o.write("    \"%s\"\n" % self.getLabel(nodes, conf))
+        o.write("    \"%s\"\n" % self.getLabel(nodes, conf).encode(latinenc, errors="ignore"))
         o.write("  ]\n")
 
     def exportGraphml(self, doc, parent, nodes, conf):

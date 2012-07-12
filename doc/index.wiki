@@ -9,14 +9,14 @@ produce DOT graph files for class or import dependencies from Python source tree
 ~[[http://furius.ca/snakefood snakefood]]||Creates module import dependency graphs. Use the Mercurial command %%hg clone https://hg.furius.ca/public/snakefood%% for a checkout of the current sources.
 ~[[http://www.logilab.org/project/pylint pyreverse]]||As part of pylint it analyzes class dependencies.
 
-Unfortunately, the resulting graphs were pretty large and visualizing them via
+Unfortunately, the resulting graphs were huge and visualizing them via
 the $$dot$$ tool did not help. PNG, PS or SVG output, the images got too large and
 the layout of the nodes and edges left a lot to desire (Example: SCons dependencies
 in [[scons.ps Postscript]] and [[scons.svg SVG]] format).
 
 Then I remembered the [[http://www.yworks.com/en/products_yed_about.html yEd graph editor]], a
 great application that can layout and handle even very large datasets...if you find a
-way to get the data inside. Since it does not import DOT files (yet), I wrote this
+way to get the data inside. Since it doesn't import DOT files (yet), I wrote this
 little converter script that outputs yEd's native file format Graphml (XML).
 
 Now looking at complicated DOT graphs is a snap...have a try!
@@ -24,7 +24,7 @@ Now looking at complicated DOT graphs is a snap...have a try!
 
 == Current version == current
 
-~[[dottoxml.zip dottoxml.zip]]||Archived folder with the Python scripts for $$dottoxml$$.
+The sources for this tool are now available at Bitbucket. Please visit [[https://bitbucket.org/dirkbaechle/dottoxml]] for downloading the latest version.
 
 == Contributions == contrib
 
@@ -116,7 +116,7 @@ python dottoxml.py --cn blanchedalmond infile.dot outfile.graphml
 
 Very simple graphs often contain only the node labels and the edge information
 itself, but no labels for the edges. With the option ''$$--ae$$'' you can enable
-the ''Auto labeling''. This means that for every edge that does not provide its
+the ''Auto labeling''. This means that for every edge that doesn't provide its
 own label, $$dottoxml$$ generates one of the form
 
 Code:
@@ -125,7 +125,7 @@ source_node_label -> destination_node_label
 When analyzing dependencies, there may appear single nodes that are ''isolated''
 from the rest of the graph and have no outgoing or incoming edges at all.
 If you want to see only ''connected'' nodes, you can enable the ''sweep'' option ''$$-s$$''.
-The script then filters out all single nodes and does not output them to the Graphml file.
+The script then filters out all single nodes and doesn't output them to the Graphml file.
 
 Finally, a very special option for the work with UML nodes that also contain the names
 of attributes and methods for a class. If you activate the ''Fit Label to Nodes'' feature
@@ -141,8 +141,7 @@ This script is still under development and far from stable! Please note the foll
 remarks and restrictions:
 
 #At the moment, the DOT parser is very simple and line-based. It detects only node and
-edge lines, no subgraphs are handled. Node and edge specifications must be in a single
-line!
+edge lines, no subgraphs are handled.
 #I tried to do my best, but the whole encoding part (Unicode support and detection of
 input encoding) still appears to be a little bit ''shaky'' to me. Do not expect too much
 here.

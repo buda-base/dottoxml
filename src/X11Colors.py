@@ -1,6 +1,6 @@
 # coding: latin-1
 # Copyright (c) 2009,2010 Dirk Baechle.
-# www: http://www.mydarc.de/dl9obn/programming/python/dottoxml
+# www: https://bitbucket.org/dirkbaechle/dottoxml
 # mail: dl9obn AT darc.de
 #
 # This program is free software; you can redistribute it and/or modify it under
