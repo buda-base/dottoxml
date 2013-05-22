@@ -1,5 +1,5 @@
 # coding: latin-1
-# Copyright (c) 2009,2010 Dirk Baechle.
+# Copyright (c) 2009,2010,2011,2012,2013 Dirk Baechle.
 # www: https://bitbucket.org/dirkbaechle/dottoxml
 # mail: dl9obn AT darc.de
 #
@@ -66,7 +66,7 @@ def parseAttributes(attribs):
 
     # Second pass: split keys from values by =
     for t in tlist:
-        apos = t.find('=')
+        apos = findUnquoted(t, '=')
         if apos > 0:
             adict[t[:apos].strip()] = t[apos+1:].strip().strip('"')
 
@@ -111,6 +111,75 @@ def escapeNewlines(label):
     l = l.replace('\\r','\n')
     return l
 
+def findUnescapedQuote(string, spos=0, qchar='"'):
+    """ Return the position of the next unescaped quote
+        character in the given string, starting at the
+        position spos.
+        Returns a -1, if no occurrence was found.
+    """
+    qpos = -1
+    
+    escaped = 0
+    for idx, c in enumerate(string[spos:]):
+        if not escaped:
+            if c == '\\':
+                escaped = 1
+            elif c == qchar:
+                return idx+spos
+        else:
+            escaped = 0
+        
+    return qpos
+
+def findUnquoted(string, char, spos=0, qchar='"'):
+    """ Return the position of the next unquoted
+        character char in the given string.
+        Searching for the next position starts at
+        spos, while parsing the quote characters is
+        always done from the start of the string.
+        Returns a -1, if no occurrence was found.
+        Warning: Assumes that the user never searches for an
+        actual quote char with this, but uses findUnescapedQuote
+        instead (see above).
+    """
+
+    # Do we find a quote char at all?
+    if string.find(qchar) >= 0:
+        # Yes, so try to count matching quotes
+        inquotes = 0
+        # Find first quote char
+        qpos = findUnescapedQuote(string, 0, qchar)
+        if qpos >= 0:
+            inquotes = 1 - inquotes
+        # Find first char to search for
+        fpos = string.find(char, spos)
+        while fpos >= 0 and qpos >= 0 and qpos < fpos:
+            # Keep track of quote chars (inside/outside),
+            # until we reach a position after the char to search for
+            while qpos < fpos and qpos >= 0:
+                qpos = findUnescapedQuote(string, qpos+1, qchar)
+                if qpos >= 0:
+                    # Toggle inside/outside counter with each found quote char
+                    inquotes = 1 - inquotes
+            # Did we enter a quoted environment? 
+            if qpos > fpos and inquotes:
+                # Then, our last occurrence of the char to search for
+                # wasn't quoted and we found our match...
+                return fpos
+            else:
+                if qpos < 0:
+                    # Catch unbalanced quoted environments
+                    return -1
+                # Continue search with next char position,
+                # outside the current quoted environment
+                while fpos < qpos and fpos >= 0:
+                    fpos = string.find(char, fpos+1)
+        # Couldn't find any further occurrence of the char
+        return fpos
+    else:
+        # Return result for a simple search
+        return string.find(char, spos)
+
 class Node:
     """ a single node in the graph """
     def __init__(self):
@@ -122,7 +191,7 @@ class Node:
 
     def initFromString(self, line):
         """ extract node info from the given text line """
-        spos = line.find('[')
+        spos = findUnquoted(line, '[')
         atts = ""
         if spos >= 0:
             atts = line[spos+1:]
@@ -308,7 +377,7 @@ class Edge:
 
     def initFromString(self, line):
         """ extract edge info from the given text line """
-        spos = line.find('[')
+        spos = findUnquoted(line, '[')
         atts = ""
         if spos >= 0:
             atts = line[spos+1:]
@@ -399,11 +468,11 @@ class Edge:
         arrow_head = conf.DefaultArrowHead
         if conf.Arrows:
             if self.attribs.has_key('arrowtail'):
-                arrow_head = self.attribs['arrowtail']
+                arrow_tail = self.attribs['arrowtail']
             if self.attribs.has_key('arrowhead'):
-                arrow_tail = self.attribs['arrowhead']
-        arrow.setAttribute(u'source',u'%s' % arrow_head)                
-        arrow.setAttribute(u'target',u'%s' % arrow_tail)                
+                arrow_head = self.attribs['arrowhead']
+        arrow.setAttribute(u'source',u'%s' % arrow_tail)                
+        arrow.setAttribute(u'target',u'%s' % arrow_head)                
         pedge.appendChild(arrow)
         if conf.EdgeLabels:
             tlabel = self.getLabel(nodes, conf)
