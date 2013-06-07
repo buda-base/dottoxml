@@ -180,6 +180,26 @@ def findUnquoted(string, char, spos=0, qchar='"'):
         # Return result for a simple search
         return string.find(char, spos)
 
+def findLastUnquoted(string, char, spos=0, qchar='"'):
+    """ Return the position of the last unquoted
+        character char in the given string.
+        Searching for the last position starts at
+        spos, while parsing the quote characters is
+        always done from the start of the string.
+        Returns a -1, if no occurrence was found.
+        Warning: Assumes that the user never searches for an
+        actual quote char with this, but uses findUnescapedQuote
+        instead (see above).
+    """
+    lastpos = findUnquoted(string, char, spos, qchar)
+    if lastpos >= 0:
+        curpos = findUnquoted(string, char, lastpos+1, qchar)
+        while curpos > 0:
+            lastpos = curpos
+            curpos = findUnquoted(string, char, lastpos+1, qchar)
+            
+    return lastpos
+
 class Node:
     """ a single node in the graph """
     def __init__(self):
@@ -194,16 +214,24 @@ class Node:
         spos = findUnquoted(line, '[')
         atts = ""
         if spos >= 0:
-            atts = line[spos+1:]
-            line = line[:spos].strip()
+            epos = findLastUnquoted(line, ']', spos)
+            if epos > 0:
+                atts = line[spos+1:epos]
+                line = line[:spos] + line[epos+1:]
+                line = line.strip()
+            else:
+                atts = line[spos+1:]
+                line = line[:spos].strip()
+            if line.startswith('node '):
+                line = line[5:]
+                line = line.lstrip()
+        # Strip off trailing ;
+        line = line.rstrip(';')
         # Process label
         self.label = line.strip('"')
         # Process attributes
         if len(atts):
-            spos = atts.rfind(']')
-            if spos > 0:
-                atts = atts[:spos]
-                self.attribs = parseAttributes(atts)
+            self.attribs = parseAttributes(atts)
         # Process sections
         if self.attribs.has_key("label"):
             tlabel = self.attribs["label"]
@@ -304,7 +332,10 @@ class Node:
         geom.setAttribute(u'x',u'0.0')
         geom.setAttribute(u'y',u'0.0')
         snode.appendChild(geom)
-        color = getColorAttribute(self.attribs, 'color', conf.DefaultNodeColor, conf)
+        if 'fillcolor' in self.attribs:
+            color = getColorAttribute(self.attribs, 'fillcolor', conf.DefaultNodeColor, conf)
+        else:
+            color = getColorAttribute(self.attribs, 'color', conf.DefaultNodeColor, conf)
         fill = doc.createElement(u'y:Fill')
         fill.setAttribute(u'color',u'%s' % color)
         fill.setAttribute(u'transparent',u'false')
@@ -380,14 +411,24 @@ class Edge:
         spos = findUnquoted(line, '[')
         atts = ""
         if spos >= 0:
-            atts = line[spos+1:]
-            line = line[:spos].strip()
-
+            epos = findLastUnquoted(line, ']', spos)
+            if epos > 0:
+                atts = line[spos+1:epos]
+                line = line[:spos] + line[epos+1:]
+                line = line.strip()
+            else:
+                atts = line[spos+1:]
+                line = line[:spos].strip()
+            if line.startswith('edge '):
+                line = line[5:]
+                line = line.lstrip()
+        # Strip off trailing ;
+        line = line.rstrip(';')
         # Process labels
         ll = line.replace('->',' ').split()
         if len(ll) > 1:
             self.src = ll[0].strip('"')
-            self.dest = ll[1].rstrip(';').strip('"')
+            self.dest = ll[1].strip('"')
         # Process attributes
         if len(atts):
             spos = atts.rfind(']')
@@ -457,7 +498,7 @@ class Edge:
         data2.setAttribute(u'key', u'd2')
 
         pedge = doc.createElement(u'y:PolyLineEdge')
-        line = doc.createElement(u'y:LineStyle')      
+        line = doc.createElement(u'y:LineStyle')
         color = getColorAttribute(self.attribs, 'color', conf.DefaultEdgeColor, conf)
         line.setAttribute(u'color',u'%s' % color)
         line.setAttribute(u'type', u'line')
