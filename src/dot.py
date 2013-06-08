@@ -168,8 +168,13 @@ def findUnquoted(string, char, spos=0, qchar='"'):
                 return fpos
             else:
                 if qpos < 0:
-                    # Catch unbalanced quoted environments
-                    return -1
+                    if inquotes:
+                        # Catch unbalanced quoted environments
+                        return -1
+                    else:
+                        # No further quote chars follow,
+                        # so simply return our current match
+                        return fpos
                 # Continue search with next char position,
                 # outside the current quoted environment
                 while fpos < qpos and fpos >= 0:
@@ -225,8 +230,15 @@ class Node:
             if line.startswith('node '):
                 line = line[5:]
                 line = line.lstrip()
+                # Hack that allows a single "node [attributes]"
+                # with default values...
+                tline = line.rstrip(';')
+                tline = tline.rstrip()
+                if len(tline) == 0:
+                    line = 'node ' + line
         # Strip off trailing ;
         line = line.rstrip(';')
+        line = line.rstrip()
         # Process label
         self.label = line.strip('"')
         # Process attributes
@@ -422,8 +434,15 @@ class Edge:
             if line.startswith('edge '):
                 line = line[5:]
                 line = line.lstrip()
+                # Hack that allows a single "edge [attributes]"
+                # with default values...
+                tline = line.rstrip(';')
+                tline = tline.rstrip()
+                if len(tline) == 0:
+                    line = 'edge ' + line
         # Strip off trailing ;
         line = line.rstrip(';')
+        line = line.rstrip()
         # Process labels
         ll = line.replace('->',' ').split()
         if len(ll) > 1:
@@ -431,10 +450,7 @@ class Edge:
             self.dest = ll[1].strip('"')
         # Process attributes
         if len(atts):
-            spos = atts.rfind(']')
-            if spos > 0:
-                atts = atts[:spos]
-                self.attribs = parseAttributes(atts)
+            self.attribs = parseAttributes(atts)
                         
     def getLabel(self, nodes, conf):
         """ return the label of the edge """
