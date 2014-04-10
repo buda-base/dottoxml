@@ -1,5 +1,5 @@
 # coding: latin-1
-# Copyright (c) 2009,2010,2011,2012,2013 Dirk Baechle.
+# Copyright (c) 2009,2010,2011,2012,2013,2014 Dirk Baechle.
 # www: https://bitbucket.org/dirkbaechle/dottoxml
 # mail: dl9obn AT darc.de
 #
@@ -31,7 +31,7 @@ import dot
 usgmsg = "Usage: dottoxml.py [options] infile.dot outfile.graphml"
 
 def usage():
-    print "dottoxml 1.5, 2013-05-22, Dirk Baechle\n"
+    print "dottoxml 1.6, 2014-04-10, Dirk Baechle\n"
     print usgmsg
     print "Hint: Try '-h' or '--help' for further infos!"
 
@@ -60,10 +60,10 @@ def exportGraphml(o, nodes, edges, options):
     import xml.dom.minidom
     doc = xml.dom.minidom.Document()
     root = doc.createElement(u'graphml')
-    root.setAttribute(u'xmlns',u'http://graphml.graphdrawing.org/xmlns/graphml')
+    root.setAttribute(u'xmlns',u'http://graphml.graphdrawing.org/xmlns')
     root.setAttribute(u'xmlns:xsi',u'http://www.w3.org/2001/XMLSchema-instance')
     root.setAttribute(u'xmlns:y',u'http://www.yworks.com/xml/graphml')
-    root.setAttribute(u'xsi:schemaLocation',u'http://graphml.graphdrawing.org/xmlns/graphml http://www.yworks.com/xml/schema/graphml/1.0/ygraphml.xsd')
+    root.setAttribute(u'xsi:schemaLocation',u'http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml/1.0/ygraphml.xsd')
     doc.appendChild(root)        
     key = doc.createElement(u'key')
     key.setAttribute(u'for',u'node')    

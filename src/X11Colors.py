@@ -1,5 +1,5 @@
 # coding: latin-1
-# Copyright (c) 2009,2010 Dirk Baechle.
+# Copyright (c) 2009,2010,2011,2012,2013,2014 Dirk Baechle.
 # www: https://bitbucket.org/dirkbaechle/dottoxml
 # mail: dl9obn AT darc.de
 #
