@@ -518,7 +518,10 @@ class Edge:
         color = getColorAttribute(self.attribs, 'color', conf.DefaultEdgeColor, conf)
         line.setAttribute(u'color',u'%s' % color)
         line.setAttribute(u'type', u'line')
-        line.setAttribute(u'width', u'1.0')
+        if self.attribs.has_key('penwidth'):
+            line.setAttribute(u'width', u'%s' % self.attribs['penwidth'])
+        else:
+            line.setAttribute(u'width', u'1.0')
         pedge.appendChild(line)
         arrow = doc.createElement(u'y:Arrows')
         arrow_tail = conf.DefaultArrowTail
