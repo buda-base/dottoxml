@@ -1,4 +1,4 @@
-## Modified version of dottoxml
+## Modified version of dottoxml 
 
 Protégé includes the OntoGraf plugin that allows to create a visual graph display from an ontology and to export that display as a `.dot` format file.
 
